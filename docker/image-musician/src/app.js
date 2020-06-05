@@ -25,14 +25,14 @@ if (!instruments[process.argv[2]]) {
 const musician = {
   uuid: uuid.v4(),
   instrument: process.argv[2],
-  activeSince: new Date(),
+  activeSince: moment().format(),
 }
 
 setInterval(() => {
   const message = Buffer.from(JSON.stringify({
     uuid: musician.uuid,
     sound: instruments[musician.instrument],
-    when: new Date(),
+    when: moment().format(),
     activeSince: musician.activeSince,
   }));
 
