@@ -1,0 +1,22 @@
+{
+  "name": "auditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kayoumido/Teaching-HEIGVD-RES-2020-Labo-Orchestra.git"
+  },
+  "author": "Doran Kayoumi & Ludovic Bonzon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kayoumido/Teaching-HEIGVD-RES-2020-Labo-Orchestra/issues"
+  },
+  "homepage": "https://github.com/kayoumido/Teaching-HEIGVD-RES-2020-Labo-Orchestra#readme",
+  "dependencies": {
+    "moment": "^2.26.0"
+  }
+}
