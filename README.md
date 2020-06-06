@@ -106,14 +106,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
 | | *Insert your diagram here...* |
 |Question | Who is going to **send UDP datagrams** and **when**? |
-| | *Enter your response here...* |
+| | It's the musician(s) that will send UDP datagrams every second |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | *Enter your response here...* |
+| | It's the auditor that will listen to the UDP multicast. When a datagram is recieved, the auditor should keep track of the current active musician(s) and if a client connects with TCP on port 2205, it should forward a list of the currently playing musician(s) |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | *Enter your response here...* |
+| | The UUID of the musician, the sound it makes, when the payload was submitted and finally an "active since" timestamp |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
-
+| | We need to be able to convert an instrument to a sound and vice-versa depending on which side we're on using a `map`, as the musicians are very good and can play any (of the 5 defined) instruments. The auditor needs to keep track of the currently playing musicians, so a list of these, containing their UUID, instrument, etc... |
 
 ## Task 2: implement a "musician" Node.js application
 
