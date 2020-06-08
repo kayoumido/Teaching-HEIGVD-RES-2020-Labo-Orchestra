@@ -98,13 +98,12 @@ $ docker run -d res/musician drum
 ```
 When you connect to the TCP interface of the **Auditor**, you should receive an array of musicians that corresponds to your commands. You should also use `tcpdump` to monitor the UDP trafic in your system.
 
-
 ## Task 1: design the application architecture and protocols
 
 | #  | Topic |
 | --- | --- |
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
-| | *Insert your diagram here...* |
+| | ![](images/RES-labo5-diagram.png) |
 |Question | Who is going to **send UDP datagrams** and **when**? |
 | | It's the musician(s) that will send UDP datagrams every second |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
@@ -141,18 +140,17 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | *Enter your response here...*  |
+| | We need to create a Dockerfile containing the configurations required to install our webapp (copying source code of app.js and installing npm packages). And then using the command `docker build --tag res/musician .` to build the image. |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | *Enter your response here...*  |
+| | As stated in the Docker documentation, the *exec* form (`ENTRYPOINT ["executable", "param1", "param2"]`) is the preferred form. We used it as follows to configure the container to run as an executable : `ENTRYPOINT ["node", "app.js"]` |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
-| | *Enter your response here...*  |
+| | We simply run the following command to use the musicians image and run the container detached : `docker run -d res/musician <instrument>`<br />An `<instrument>` can be a `piano`, a `trumpet`, a `flute`, a `violin` or a `drum` .<br />If no or multiple `<instrument>` are specified, our app displays an error and stops. |
 |Question | How do we get the list of all **running containers**?  |
-| | *Enter your response here...*  |
+| | Using the command `docker ps` |
 |Question | How do we **stop/kill** one running container?  |
-| | *Enter your response here...*  |
+| | Using the command `docker kill <name_of_container>`<br />`<name_of_container>` is the name displayed in the far left side of the `docker ps` command result and is a random generated name (that can be set using the `--name` attribute when using `docker run`. |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
-| | *Enter your response here...*  |
-
+| | By using a network protocol analysing tool (sniffer) such as Wireshark or using the `tcpdump` command on the interface. |
 
 ## Task 4: implement an "auditor" Node.js application
 
