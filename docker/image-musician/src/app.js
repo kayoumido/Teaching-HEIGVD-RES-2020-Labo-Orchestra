@@ -4,20 +4,19 @@ const moment = require('moment');
 
 const s = dgram.createSocket('udp4');
 
-const instruments = {
-  piano: 'ti-ta-ti',
-  trumpet: 'pouet',
-  flute: 'trulu',
-  violin: 'gzi-gzi',
-  drum: 'boum-boum',
-};
+const instruments = new Map();
+instruments.set('piano', 'ti-ta-ti');
+instruments.set('trumpet', 'pouet');
+instruments.set('flute', 'trulu');
+instruments.set('violin', 'gzi-gzi');
+instruments.set('drum', 'boum-boum');
 
 if (process.argv.length - 2 != 1) {
   console.error("Too many or too few arguments!");
   return;
 }
 
-if (!instruments[process.argv[2]]) {
+if (!instruments.get(process.argv[2])) {
   console.error("Unknown instrument!");
   return;
 }
@@ -31,7 +30,7 @@ const musician = {
 setInterval(() => {
   const message = Buffer.from(JSON.stringify({
     uuid: musician.uuid,
-    sound: instruments[musician.instrument],
+    sound: instruments.get(musician.instrument),
     when: moment().format(),
     activeSince: musician.activeSince,
   }));
