@@ -118,21 +118,21 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
-| | *Enter your response here...*  |
+| | To serialize an object we can simply do `JSON.stringify(/*object*/)` |
 |Question | What is **npm**?  |
-| | *Enter your response here...*  |
+| | **npm** is Node.js' package manager |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
-| | *Enter your response here...*  |
+| | `npm install` install all the packages found in the `package.json` file. Using the `--save` flag installing a new dependency will add it to the `package.json` file. |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-| | *Enter your response here...*  |
+| | We can use `https://www.npmjs.com/` to search for packages. For instance if we need to generate a `uuid`, we can go on `https://www.npmjs.com/` to see if there is a package that does it for us.![](images/npmsearch.png) |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
-| | *Enter your response here...*  |
+| | We can use the [uuid](https://www.npmjs.com/package/uuid) package.<br /> ![](images/uuidexample.png) |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | *Enter your response here...*  |
+| | We can use `setInterval()` . It takes two arguments. The first is the function to execute on a periodic basis and the second is the delay between each executions. |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
-| | *Enter your response here...*  |
+| | We can use `dgram` which is a standard Node.js module to work with UDP. ![](images/udpmessage.png) |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | *Enter your response here...*  |
+| | The command line arguments are stored in `process.argv` ![](images/commandlineargument.png)<br /> [Commander](https://www.npmjs.com/package/commander) is a popular library to handle command line arguments. |
 
 
 ## Task 3: package the "musician" app in a Docker image
@@ -157,15 +157,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-| | *Enter your response here...*  |
+| | All we need to do is subscribe to the group. e.g. `s.addMembership("239.255.22.5");` |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
 | | *Enter your response here...* |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
 | | *Enter your response here...* |
 |Question | When and how do we **get rid of inactive players**?  |
-| | *Enter your response here...* |
-|Question | How do I implement a **simple TCP server** in Node.js?  |
-| | *Enter your response here...* |
+| | ![](images/reminactive.png) |
+|Question | How do I implement a **simple TCP server** in Node.js? |
+|  | We can use the [net](https://www.npmjs.com/package/net) library to create a TCP server.<br /> ![](images/tcpserver.png) |
 
 
 ## Task 5: package the "auditor" app in a Docker image
@@ -173,7 +173,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we validate that the whole system works, once we have built our Docker image? |
-| | *Enter your response here...* |
+| | Apart from using the `validate.sh` script, we can manually start a `Auditor` container and a few `Musicians` containers. Once this is done, we can use `tcpdump` to check that the `Musicians` are correctly sending UDP requests to the **multicast**  address.<br />![](images/mulicast.png) |
 
 
 ## Constraints
@@ -187,3 +187,4 @@ Please be careful to adhere to the specifications in this document, and in parti
 Also, we have prepared two directories, where you should place your two `Dockerfile` with their dependent files.
 
 Have a look at the `validate.sh` script located in the top-level directory. This script automates part of the validation process for your implementation (it will gradually be expanded with additional operations and assertions). As soon as you start creating your Docker images (i.e. creating your Dockerfiles), you should try to run it.
+
