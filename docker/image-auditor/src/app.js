@@ -1,6 +1,7 @@
 const dgram = require('dgram');
 const moment = require('moment');
 const net = require('net');
+
 const s = dgram.createSocket('udp4');
 
 const PORT = "2205";
@@ -28,6 +29,7 @@ s.on('message', (msg, src) => {
   });
 });
 
+// check if there are any inactive musicians so we can remove them
 setInterval(() => {
   for (let [uuid, musician] of musicians.entries()) {
     if (moment().diff(moment(musician.last), 'seconds') > 5) {
@@ -37,8 +39,12 @@ setInterval(() => {
   }
 }, 1000);
 
+// setup a TCP server so clients can get the list of active musicians
 net.createServer((sock) => {
   let paylod = [];
+  // since we store more info than what the clients want,
+  // we build new objects with the minimum info to make the
+  // client happy
   for (let [uuid, musician] of musicians.entries()) {
     paylod.push({
       uuid: uuid,

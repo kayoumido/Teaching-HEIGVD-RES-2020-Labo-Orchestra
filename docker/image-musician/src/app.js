@@ -11,6 +11,8 @@ instruments.set('flute', 'trulu');
 instruments.set('violin', 'gzi-gzi');
 instruments.set('drum', 'boum-boum');
 
+// since process.argv also contains `node` and the path to the script,
+// we simply do - 2 to see have only 1 argument.
 if (process.argv.length - 2 != 1) {
   console.error("Too many or too few arguments!");
   return;
@@ -21,6 +23,7 @@ if (!instruments.get(process.argv[2])) {
   return;
 }
 
+// build a musician object to keep his information
 const musician = {
   uuid: uuid.v4(),
   instrument: process.argv[2],
