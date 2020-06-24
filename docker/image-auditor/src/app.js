@@ -19,7 +19,7 @@ s.bind(MULTICAST_PORT, () => {
 s.on('message', (msg, src) => {
   const req = JSON.parse(msg.toString());
   musicians.set(req.uuid, {
-    instrument: req.instrument,,
+    instrument: req.instrument,
     last: moment().format(),
     activeSince: req.activeSince,
   });
