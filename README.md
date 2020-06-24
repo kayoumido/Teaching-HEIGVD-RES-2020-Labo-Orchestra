@@ -105,13 +105,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
 | | ![](images/RES-labo5-diagram.png) |
 |Question | Who is going to **send UDP datagrams** and **when**? |
-| | It's the musician(s) that will send UDP datagrams every second |
+| | Each second, the musician(s) will send UDP datagrams. |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
 | | It's the auditor that will listen to the UDP multicast. When a datagram is recieved, the auditor should keep track of the current active musician(s) and if a client connects with TCP on port 2205, it should forward a list of the currently playing musician(s) |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | The UUID of the musician, the sound it makes, when the payload was submitted and finally an "active since" timestamp |
+| | The UUID of the musician, the sound it makes and finally an "active since" timestamp |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | We need to be able to convert an instrument to a sound and vice-versa depending on which side we're on using a `map`, as the musicians are very good and can play any (of the 5 defined) instruments. The auditor needs to keep track of the currently playing musicians, so a list of these, containing their UUID, instrument, etc... |
+| | The musicians (i.e. sender): We have a `Map` used as a dictionary for the instruments and the sound they make.<br />The auditor (i.e. receiver): We have a `Map` to store all the musicians that played within the last 5 seconds. |
 
 ## Task 2: implement a "musician" Node.js application
 
@@ -122,17 +122,17 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | What is **npm**?  |
 | | **npm** is Node.js' package manager |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
-| | `npm install` install all the packages found in the `package.json` file. Using the `--save` flag installing a new dependency will add it to the `package.json` file. |
+| | `npm install` is used to install dependencies. On it's own it will install all the packages found in the `package.json` file. If you specify a package (e.g. `npm install uuid`) it will install only that package. The `--save` flag will add a new dependency to the `package.json` file .As of `npm 5.0.0` this flag is deprecated because `npm install`  will automatically add packages to the `package.json` file. |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
 | | We can use `https://www.npmjs.com/` to search for packages. For instance if we need to generate a `uuid`, we can go on `https://www.npmjs.com/` to see if there is a package that does it for us.![](images/npmsearch.png) |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
 | | We can use the [uuid](https://www.npmjs.com/package/uuid) package.<br /> ![](images/uuidexample.png) |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | We can use `setInterval()` . It takes two arguments. The first is the function to execute on a periodic basis and the second is the delay between each executions. |
+| | `setInterval()` is used to execute a function on a **periodic** basis. It takes two arguments, the first is the function to execute on a periodic basis and the second is the delay between each executions. |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
 | | We can use `dgram` which is a standard Node.js module to work with UDP. ![](images/udpmessage.png) |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | The command line arguments are stored in `process.argv` ![](images/commandlineargument.png)<br /> [Commander](https://www.npmjs.com/package/commander) is a popular library to handle command line arguments. |
+| | Node.js stores the command line arguments in `process.argv`. The two first elements are `node` and the path to the script. We can skip these elements by doing the following `const argv = process.argv.slice(2);`.  All that is left in the array are all the arguments passed to the script. |
 
 
 ## Task 3: package the "musician" app in a Docker image
@@ -140,9 +140,9 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | We need to create a Dockerfile containing the configurations required to install our webapp (copying source code of app.js and installing npm packages). And then using the command `docker build --tag res/musician .` to build the image. |
+| | Defining a Docker image, is done with a Dockerfile. The file will contain all the needed the configurations required for our image (Here's [an example](https://github.com/kayoumido/Teaching-HEIGVD-RES-2020-Labo-Orchestra/blob/master/docker/image-musician/Dockerfile)). <br />Building an image is done with the command `docker build --tag <name> <path/to/dockerfile>`. |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | As stated in the Docker documentation, the *exec* form (`ENTRYPOINT ["executable", "param1", "param2"]`) is the preferred form. We used it as follows to configure the container to run as an executable : `ENTRYPOINT ["node", "app.js"]` |
+| | `ENTRYPOINT` is used to configure the container to run as an executable. Here's an example `ENTRYPOINT ["node", "app.js"]` |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
 | | We simply run the following command to use the musicians image and run the container detached : `docker run -d res/musician <instrument>`<br />An `<instrument>` can be a `piano`, a `trumpet`, a `flute`, a `violin` or a `drum` .<br />If no or multiple `<instrument>` are specified, our app displays an error and stops. |
 |Question | How do we get the list of all **running containers**?  |
@@ -150,20 +150,20 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How do we **stop/kill** one running container?  |
 | | Using the command `docker kill <name_of_container>`<br />`<name_of_container>` is the name displayed in the far left side of the `docker ps` command result and is a random generated name (that can be set using the `--name` attribute when using `docker run`. |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
-| | By using a network protocol analysing tool (sniffer) such as Wireshark or using the `tcpdump` command on the interface. |
+| | By using a network sniffing tools such as `Wireshark` and `tcpdump`. To reduce the amount of clutter in the result, we can specify the docker interface.  With `tcpdump`, we can simply do `tcpdump -i docker0`. |
 
 ## Task 4: implement an "auditor" Node.js application
 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-| | All we need to do is subscribe to the group. e.g. `s.addMembership("239.255.22.5");` |
+| | All we need to do is subscribe to the group. e.g. `s.addMembership('239.255.22.5')` |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
-| | *Enter your response here...* |
+|  | Creating a new `Map` object is pretty straight forward, all we need to do is `const instruments = new Map()`. Then to add elements to the `Map` all we need to do is use the `.set('key', 'value')` method. `instruments.set('piano', 'ti-ta-ti')`. |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
-| | *Enter your response here...* |
+| | To get the current datetime, we can use the default constructor of `Moment.js`. `const today = moment()`. Then we can use `.format(<format>)` to get a string representation of the date with the given format. `today.format('YYYY-MM-DD')` will return `2020-06-24`. If no format is given, it will use it's default format and the returned string will look something like `2016-04-27T05:39:03.211Z`.<br />`Moment.js` offers a number of methods to help with date manipulation. For instance, we can add 7 days to a date object. `moment().add(7, 'd')`. |
 |Question | When and how do we **get rid of inactive players**?  |
-| | ![](images/reminactive.png) |
+| | To get rid of any inactive players, we need to check if it was active in the last 5 seconds (i.e. if she/he played a sound). If not, we can remove said player from the musician `Map`.  <br />![](images/reminactive.png) |
 |Question | How do I implement a **simple TCP server** in Node.js? |
 |  | We can use the [net](https://www.npmjs.com/package/net) library to create a TCP server.<br /> ![](images/tcpserver.png) |
 
