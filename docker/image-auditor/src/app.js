@@ -9,13 +9,6 @@ const MULTICAST_PORT = 3000;
 const MULTICAST_ADDR = '239.255.22.5';
 const MAX_INACTIVITY = 5;
 
-const instruments = new Map();
-instruments.set('piano', 'ti-ta-ti');
-instruments.set('trumpet', 'pouet');
-instruments.set('flute', 'trulu');
-instruments.set('violin', 'gzi-gzi');
-instruments.set('drum', 'boum-boum');
-
 let musicians = new Map()
 
 s.bind(MULTICAST_PORT, () => {
@@ -26,7 +19,7 @@ s.bind(MULTICAST_PORT, () => {
 s.on('message', (msg, src) => {
   const req = JSON.parse(msg.toString());
   musicians.set(req.uuid, {
-    instrument: [...instruments].find(([key, val]) => val == req.sound)[0],
+    instrument: req.instrument,,
     last: moment().format(),
     activeSince: req.activeSince,
   });

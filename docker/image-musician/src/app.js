@@ -41,6 +41,7 @@ setInterval(() => {
   const message = Buffer.from(JSON.stringify({
     uuid: musician.uuid,
     sound: instruments.get(musician.instrument),
+    instrument: musician.instrument,
     activeSince: musician.activeSince,
   }));
 
