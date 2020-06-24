@@ -11,6 +11,9 @@ instruments.set('flute', 'trulu');
 instruments.set('violin', 'gzi-gzi');
 instruments.set('drum', 'boum-boum');
 
+const MULTICAST_PORT = 3000;
+const MULTICAST_ADDR = '239.255.22.5';
+
 // since process.argv also contains `node` and the path to the script,
 // we simply do - 2 to see have only 1 argument.
 if (process.argv.length - 2 != 1) {
@@ -34,11 +37,10 @@ setInterval(() => {
   const message = Buffer.from(JSON.stringify({
     uuid: musician.uuid,
     sound: instruments.get(musician.instrument),
-    when: moment().format(),
     activeSince: musician.activeSince,
   }));
 
-  s.send(message, 0, message.length, 3000, "239.255.22.5", (err, bytes) => {
+  s.send(message, 0, message.length, MULTICAST_PORT, MULTICAST_ADDR, (err, bytes) => {
     console.log('Sending package yay');
   });
 }, 1000);

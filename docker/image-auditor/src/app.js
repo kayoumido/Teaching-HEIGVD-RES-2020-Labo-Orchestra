@@ -4,7 +4,10 @@ const net = require('net');
 
 const s = dgram.createSocket('udp4');
 
-const PORT = "2205";
+const TCP_PORT = 2205;
+const MULTICAST_PORT = 3000;
+const MULTICAST_ADDR = '239.255.22.5';
+const MAX_INACTIVITY = 5;
 
 const instruments = new Map();
 instruments.set('piano', 'ti-ta-ti');
@@ -15,29 +18,27 @@ instruments.set('drum', 'boum-boum');
 
 let musicians = new Map()
 
-s.bind(3000, () => {
-  console.log("Joining the orchestra");
-  s.addMembership("239.255.22.5");
+s.bind(MULTICAST_PORT, () => {
+  console.log('Joining the orchestra');
+  s.addMembership(MULTICAST_ADDR);
 });
 
 s.on('message', (msg, src) => {
   const req = JSON.parse(msg.toString());
   musicians.set(req.uuid, {
     instrument: [...instruments].find(([key, val]) => val == req.sound)[0],
-    last: req.when,
+    last: moment().format(),
     activeSince: req.activeSince,
   });
-});
 
-// check if there are any inactive musicians so we can remove them
-setInterval(() => {
+  // check if there are any inactive musicians so we can remove them
   for (let [uuid, musician] of musicians.entries()) {
-    if (moment().diff(moment(musician.last), 'seconds') > 5) {
+    if (moment().diff(moment(musician.last), 'seconds') > MAX_INACTIVITY) {
       console.log(`${uuid} is inactive`);
       musicians.delete(uuid);
     }
   }
-}, 1000);
+});
 
 // setup a TCP server so clients can get the list of active musicians
 net.createServer((sock) => {
@@ -55,4 +56,4 @@ net.createServer((sock) => {
 
   sock.write(JSON.stringify(paylod));
   sock.end();
-}).listen(PORT);
+}).listen(TCP_PORT);
