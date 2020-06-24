@@ -3,7 +3,6 @@ const moment = require('moment');
 const net = require('net');
 const s = dgram.createSocket('udp4');
 
-const HOST = "127.0.0.1";
 const PORT = "2205";
 
 const instruments = new Map();
