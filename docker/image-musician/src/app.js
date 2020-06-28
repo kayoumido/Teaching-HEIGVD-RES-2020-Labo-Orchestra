@@ -14,10 +14,11 @@ instruments.set('drum', 'boum-boum');
 const MULTICAST_PORT = 3000;
 const MULTICAST_ADDR = '239.255.22.5';
 
+// since process.argv also contains `node` and the path to the script,
+// we can simply remove the first two elements
 const argv = process.argv.slice(2);
 
-// since process.argv also contains `node` and the path to the script,
-// we simply do - 2 to see have only 1 argument.
+// we only accepts 1 argument
 if (argv.length != 1) {
   console.error("Too many or too few arguments!");
   return;
@@ -28,16 +29,19 @@ if (!instruments.get(argv[0])) {
   return;
 }
 
-// build a musician object to keep his information
+// build a musician object to keep the information
 const musician = {
   uuid: uuid.v4(),
   instrument: argv[0],
   activeSince: moment().format(),
 }
 
+// play lovely music every second
 setInterval(() => {
-  console.log(musician);
 
+  // build the payload to send to the multicast group
+  // note: we send the `instrument` and the `activeSince` from
+  //       the musician to simplify auditor 
   const message = Buffer.from(JSON.stringify({
     uuid: musician.uuid,
     sound: instruments.get(musician.instrument),
